@@ -3,59 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mapa Interativo — Exemplo</title>
+  <title>Mapa Interativo São Thomé das Letras</title>
 
   <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+3I1QY7r3d1bQ2q2gk1rGx1k7K4Z1Y7r4J0cWk+3k="
     crossorigin=""
   />
 
   <style>
-    html,body { height:100%; margin:0; padding:0; }
-    #map { width:100%; height:100vh; }
-    .map-controls {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 400;
-      background: rgba(255,255,255,0.9);
-      padding:8px;
-      border-radius:6px;
-      box-shadow:0 1px 4px rgba(0,0,0,0.3);
-    }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map { width: 100%; height: 100vh; }
   </style>
 </head>
 <body>
   <div id="map"></div>
-  <div class="map-controls">
-    <button id="fit-all">Zoom todos</button>
-    <button id="add-random">Add marcador aleatório</button>
-  </div>
 
   <!-- Leaflet JS -->
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-+b0Yp2k3xFz3f5xv9qGZ6z1qJY6E9w2Z6k1rGx1k7K4="
     crossorigin=""
   ></script>
 
-  <!-- Opcional: MarkerCluster (bom quando muitos marcadores) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
-  />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
-  />
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
   <script>
-    // Inicializa o mapa
-    const map = L.map('map').setView([-23.55052, -46.633308], 12); // São Paulo como exemplo
+    // Inicializa o mapa centralizado em São Thomé das Letras
+    const map = L.map('map').setView([-21.741, -45.252], 13);
 
     // Camada de tiles (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -63,70 +36,25 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Exemplo: alguns marcadores iniciais
+    // Adicionar alguns pontos de interesse
     const pontos = [
-      { title: 'Ponto A', coords: [-23.55, -46.63], desc: 'Descrição do Ponto A' },
-      { title: 'Ponto B', coords: [-23.56, -46.64], desc: 'Descrição do Ponto B' },
-      { title: 'Ponto C', coords: [-23.54, -46.62], desc: 'Descrição do Ponto C' }
+      { nome: 'Cachoeira Eubiose', coords: [-21.740, -45.250], desc: 'Cachoeira famosa da cidade' },
+      { nome: 'Cachoeira Véu de Noiva', coords: [-21.738, -45.255], desc: 'Outra cachoeira linda' },
+      { nome: 'Centro Histórico', coords: [-21.741, -45.252], desc: 'Centro da cidade' }
     ];
 
-    // Cluster group (para muitos marcadores usar cluster)
-    const markers = L.markerClusterGroup();
-
     pontos.forEach(p => {
-      const m = L.marker(p.coords);
-      m.bindPopup(<b>${p.title}</b><br>${p.desc});
-      markers.addLayer(m);
+      L.marker(p.coords)
+        .addTo(map)
+        .bindPopup(<b>${p.nome}</b><br>${p.desc});
     });
 
-    map.addLayer(markers);
-
-    // Botão: ajustar zoom para mostrar todos os marcadores
-    document.getElementById('fit-all').addEventListener('click', () => {
-      const group = markers;
-      if (group.getLayers().length) {
-        map.fitBounds(group.getBounds().pad(0.2));
-      }
-    });
-
-    // Adicionar marcador aleatório (exemplo de interação)
-    document.getElementById('add-random').addEventListener('click', () => {
-      const center = map.getCenter();
-      const jitterLat = (Math.random() - 0.5) * 0.02;
-      const jitterLng = (Math.random() - 0.5) * 0.02;
-      const lat = center.lat + jitterLat;
-      const lng = center.lng + jitterLng;
-      const mk = L.marker([lat, lng]).addTo(markers);
-      mk.bindPopup(Marcador aleatório<br> ${lat.toFixed(5)}, ${lng.toFixed(5)}).openPopup();
-    });
-
-    // Exemplo: carregar GeoJSON (pode apontar para arquivo .geojson no repo)
-    async function loadGeoJSON(url) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Falha ao carregar GeoJSON');
-        const gj = await res.json();
-        L.geoJSON(gj, {
-          onEachFeature(feature, layer) {
-            let props = feature.properties || {};
-            const title = props.title || props.name || 'Feature';
-            layer.bindPopup(<strong>${title}</strong>);
-          }
-        }).addTo(map);
-      } catch (err) {
-        console.warn('GeoJSON não carregado:', err);
-      }
-    }
-
-    // Se você tiver um arquivo 'dados.geojson' no repo, descomente:
-    // loadGeoJSON('dados.geojson');
-
-    // Exemplo: permitir adicionar marcadores clicando (pode remover se não quiser)
+    // Exemplo: adicionar marcador clicando no mapa
     map.on('click', e => {
-      const mk = L.marker(e.latlng).addTo(markers);
-      mk.bindPopup(Marcador criado<br>${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}).openPopup();
+      L.marker(e.latlng).addTo(map)
+        .bindPopup(Marcador criado<br>${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)})
+        .openPopup();
     });
-
   </script>
 </body>
 </html>
