@@ -6,12 +6,8 @@
   <title>Mapa São Thomé das Letras</title>
 
   <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+3I1QY7r3d1bQ2q2gk1rGx1k7K4Z1Y7r4J0cWk+3k="
-    crossorigin=""
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
   <style>
     html, body { height: 100%; margin: 0; padding: 0; }
     #map { width: 100%; height: 100vh; }
@@ -21,14 +17,10 @@
   <div id="map"></div>
 
   <!-- Leaflet JS -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-+b0Yp2k3xFz3f5xv9qGZ6z1qJY6E9w2Z6k1rGx1k7K4="
-    crossorigin=""
-  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Inicializa o mapa centrado em São Thomé das Letras
+    // Inicializa o mapa
     const map = L.map('map').setView([-21.741, -45.252], 13);
 
     // Tiles OpenStreetMap
@@ -50,7 +42,7 @@
         .bindPopup(<b>${p.nome}</b><br>${p.desc});
     });
 
-    // Permitir adicionar marcador clicando no mapa
+    // Marcador clicável
     map.on('click', e => {
       L.marker(e.latlng).addTo(map)
         .bindPopup(Marcador criado<br>${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)})
